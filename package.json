@@ -1,0 +1,8 @@
+{
+  "name": "@strv/task-eslint",
+  "version": "0.1.0",
+  "description": "STRV mrm task for configuring ESLint",
+  "main": "index.js",
+  "license": "MIT",
+  "private": false
+}
