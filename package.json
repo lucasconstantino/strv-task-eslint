@@ -4,5 +4,8 @@
   "description": "STRV mrm task for configuring ESLint",
   "main": "index.js",
   "license": "MIT",
-  "private": false
+  "private": false,
+  "dependencies": {
+    "mrm-core": "^4.0.2"
+  }
 }
