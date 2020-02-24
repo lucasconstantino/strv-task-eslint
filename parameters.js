@@ -1,8 +1,19 @@
+const fs = require("fs");
+const path = require("path");
+const pkgUp = require("pkg-up");
+
 const {
   dependencies = {},
   devDependencies = {},
   peerDependencies = {}
 } = require("./package.json");
+
+const root = path.dirname(pkgUp.sync());
+
+const paths = {
+  root,
+  gitignore: path.resolve(root, "./.gitignore")
+};
 
 const hasDependency = name =>
   Boolean(
@@ -81,4 +92,12 @@ const presets = {
   }
 };
 
-module.exports = { stack, presets };
+const ignore = {
+  type: "editor",
+  message: "ESLint ignore content",
+  default: fs.existsSync(paths.gitignore)
+    ? "# copied from .gitignore:\n" + fs.readFileSync(paths.gitignore, "utf-8")
+    : undefined
+};
+
+module.exports = { stack, presets, ignore };
