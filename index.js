@@ -78,22 +78,16 @@ const task = (config, { interactive }) => {
     ? "babel-eslint"
     : null;
 
-  // `@typescript-eslint/parser` is already a dependency on @strv/typescript,
-  // meaning we don't have to manually install it.
-  if (parser === "babel-eslint") {
+  const useBabelParser = parser === "babel-eslint";
+  const useTSparser = parser === "@typescript-eslint/parser";
+
+  if (useBabelParser) {
     dependencies.push("babel-eslint");
   }
 
-  if (parser === "@typescript-eslint/parser") {
+  if (useTSparser) {
     dependencies.push("typescript");
     eslintrc.set("parserOptions", { project: "./tsconfig.json" });
-
-    // create minimal tsconfig.json
-    if (!fs.existsSync(paths.tsconfig)) {
-      console.log(messages.noTSConfig);
-      execSync("npx tsc --init", { cwd: root });
-      console.log(messages.createTSConfig);
-    }
   }
 
   // create .eslintrc.json
@@ -114,6 +108,13 @@ const task = (config, { interactive }) => {
 
   // install dependencies
   install(dependencies, { dev: true });
+
+  if (useTSparser && !fs.existsSync(paths.tsconfig)) {
+    console.log(messages.noTSConfig);
+    // create minimal tsconfig.json
+    execSync("npx tsc --init", { cwd: root });
+    console.log(messages.createTSConfig);
+  }
 };
 
 task.description = description;
