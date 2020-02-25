@@ -104,6 +104,7 @@ const task = config => {
       `eslint ${extensions.map(ext => `--ext ${ext}`).join(" ")}`
     )
     .setScript("lint", `${manager} run eslint ${getSourceDir()}`)
+    .prependScript("qa", `${manager} run lint`)
     .save();
 
   // install dependencies
