@@ -43,7 +43,12 @@ const getSourceDir = () =>
 /**
  * Task definition.
  */
-const task = config => {
+const task = (config, { interactive }) => {
+  if (!interactive) {
+    console.error(messages.onlyInteractive);
+    return process.exit(1);
+  }
+
   const {
     presets,
     ignore,
