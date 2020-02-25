@@ -1,3 +1,6 @@
+/* eslint-disable no-process-exit, no-sync */
+"use strict";
+
 const fs = require("fs");
 const path = require("path");
 const pkgUp = require("pkg-up");
@@ -6,17 +9,7 @@ const parameters = require("./lib/parameters");
 const { packageManager } = require("./lib/manager");
 const messages = require("./lib/messages");
 
-const {
-  json,
-  packageJson,
-  file,
-  lines,
-  install,
-  uninstall,
-  getExtsFromCommand
-} = require("mrm-core");
-
-const execCommand = require("mrm-core/src/util/execCommand.js");
+const { json, packageJson, file, install } = require("mrm-core");
 
 const root = path.dirname(pkgUp.sync());
 
@@ -36,7 +29,8 @@ const getSourceDir = () =>
   `./${path.relative(
     root,
     [paths.src, paths.source].find(
-      file => fs.existsSync(file) && fs.lstatSync(file).isDirectory()
+      filePath =>
+        fs.existsSync(filePath) && fs.lstatSync(filePath).isDirectory()
     ) || ""
   )}`;
 
