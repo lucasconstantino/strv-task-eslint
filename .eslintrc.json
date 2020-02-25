@@ -1,0 +1,7 @@
+{
+  "extends": [
+    "prettier",
+    "@strv/node",
+    "@strv/node/v12"
+  ]
+}
