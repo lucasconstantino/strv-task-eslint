@@ -2,9 +2,9 @@ const fs = require("fs");
 const path = require("path");
 const pkgUp = require("pkg-up");
 const { execSync } = require("child_process");
-const kleur = require("kleur");
 const parameters = require("./lib/parameters");
 const { packageManager } = require("./lib/manager");
+const messages = require("./lib/messages");
 
 const {
   json,
@@ -85,15 +85,9 @@ const task = config => {
 
     // create minimal tsconfig.json
     if (!fs.existsSync(paths.tsconfig)) {
-      console.log(
-        kleur.yellow(
-          "No tsconfig.json was found. We'll run `tsc --init` to ensure a default one is available, but you should probably configure it later."
-        )
-      );
-
+      console.log(messages.noTSConfig);
       execSync("npx tsc --init", { cwd: root });
-
-      console.log(kleur.green("Create tsconfig.json"));
+      console.log(messages.createTSConfig);
     }
   }
 
