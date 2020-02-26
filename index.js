@@ -4,7 +4,6 @@
 const fs = require("fs");
 const path = require("path");
 const pkgUp = require("pkg-up");
-const { execSync } = require("child_process");
 const parameters = require("./lib/parameters");
 const { packageManager } = require("./lib/manager");
 const messages = require("./lib/messages");
@@ -44,6 +43,7 @@ const task = (config, { interactive }) => {
   }
 
   const {
+    stack,
     presets,
     ignore,
     extensions,
@@ -53,6 +53,9 @@ const task = (config, { interactive }) => {
   const pkg = packageJson();
   const eslintrc = json(".eslintrc.json");
   const eslintignore = file(".eslintignore");
+  const tsconfig = json("tsconfig.json");
+  const source = getSourceDir();
+  const sourceAbs = source.replace(/^\.\//u, "");
 
   const dependencies = presets
     .map(preset => preset.split(":")[0])
@@ -85,7 +88,10 @@ const task = (config, { interactive }) => {
   }
 
   // create .eslintrc.json
-  eslintrc.set("extends", extend).save();
+  eslintrc
+    .set("root", true)
+    .set("extends", extend)
+    .save();
 
   // create .eslintignore
   eslintignore.save(ignore);
@@ -96,7 +102,7 @@ const task = (config, { interactive }) => {
       "eslint",
       `eslint ${extensions.map(ext => `--ext ${ext}`).join(" ")}`
     )
-    .setScript("lint", `${manager} run eslint ${getSourceDir()}`)
+    .setScript("lint", `${manager} run eslint ${source}`)
     .prependScript("qa", `${manager} run lint`)
     .save();
 
@@ -104,10 +110,39 @@ const task = (config, { interactive }) => {
   install(dependencies, { dev: true });
 
   if (useTSparser && !fs.existsSync(paths.tsconfig)) {
-    console.log(messages.noTSConfig);
-    // create minimal tsconfig.json
-    execSync("npx tsc --init", { cwd: root });
-    console.log(messages.createTSConfig);
+    // create tsconfig.json
+    tsconfig
+      .merge({
+        compilerOptions: {
+          allowJs: extensions.includes(".js") || extensions.includes(".jsx"),
+          jsx: "preserve",
+          lib: ["es2017", "ESNext"].concat(
+            // browser based
+            stack.includes("react") ? ["dom"] : []
+          ),
+          module: "esnext",
+          moduleResolution: "node",
+          noEmit: true,
+          noUnusedLocals: true,
+          noUnusedParameters: true,
+          preserveConstEnums: true,
+          removeComments: false,
+          skipLibCheck: true,
+          sourceMap: true,
+          strict: true,
+          target: "esnext",
+          noImplicitAny: true,
+          noImplicitThis: true,
+          suppressImplicitAnyIndexErrors: true,
+          strictFunctionTypes: true,
+          esModuleInterop: true,
+          resolveJsonModule: true,
+          pretty: true,
+          forceConsistentCasingInFileNames: true
+        },
+        include: [sourceAbs]
+      })
+      .save();
   }
 };
 
