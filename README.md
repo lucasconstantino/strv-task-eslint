@@ -5,7 +5,7 @@
 ## Install
 
 ```sh
-npx mrm @strv/task-eslint -i
+npm install -g @strv/task-eslint && npx mrm @strv/task-eslint -i
 ```
 
 ... and go through the inquiries :tada:
