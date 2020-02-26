@@ -1,9 +1,9 @@
 {
   "name": "@strv/task-eslint",
   "version": "0.1.0",
-  "description": "STRV mrm task for configuring ESLint",
+  "description": "Mrm task for configuring ESLint based on STRV's Code Quality Tools",
   "main": "index.js",
-  "license": "MIT",
+  "license": "BSD-3-Clause",
   "private": false,
   "dependencies": {
     "kleur": "^3.0.3",
